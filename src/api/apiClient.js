@@ -110,3 +110,44 @@ export const deleteAdminMatch = async (token, matchId) => {
 
   return response.json();
 };
+
+// JWT token management
+export const setToken = (token) => {
+  localStorage.setItem('auth_token', token);
+};
+
+export const setCurrentUser = (user) => {
+  localStorage.setItem('auth_user', JSON.stringify(user));
+};
+
+export const getToken = () => {
+  return localStorage.getItem('auth_token');
+};
+
+export const getCurrentUser = () => {
+  const storedUser = localStorage.getItem('auth_user');
+
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedUser);
+  } catch (error) {
+    return null;
+  }
+};
+
+export const removeToken = () => {
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('auth_user');
+};
+
+export const isAuthenticated = () => {
+  return !!getToken();
+};
+
+export const isAdmin = () => {
+  const user = getCurrentUser();
+  return user?.role === 'admin';
+};
