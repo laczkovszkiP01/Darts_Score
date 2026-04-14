@@ -21,8 +21,8 @@ function Home() {
             <p>Számold pontosan a pontjaidat, tudd meg a szabályokat és fejleszd a játékod!</p>
           </div>
         </div>
-        <ContentBox cim="A Dartsról" leftContentImage={dartsImage1} rightContent="A darts egy precíziós sport, amelyben a játékosok három nyilat dobnak egy kör alakú táblába, és minden körben a lehető legjobb pontszámot próbálják elérni. A játék nemcsak pontosságot, hanem taktikai gondolkodást is igényel, mert a különböző kiszállási szabályok és pontlevonási helyzetek miatt mindig meg kell tervezni a következő dobásokat. A leggyakoribb játékmódok közé tartozik a 301 és az 501, ahol a cél a pontos 0 pont elérése a szabályoknak megfelelő befejezéssel."/>
-        <ContentBoxType2 cim="A Dartshoz szükséges eszközök" leftContentH4="Darts Nyíl" leftContentImage={dartsImage2} rightContentH4="Darts Tábla" rightContentImage={dartsImage3} />
+        <ContentBox cim="A Dartsról" balKep={dartsImage1} jobb="A darts egy precíziós sport, amelyben a játékosok három nyilat dobnak egy kör alakú táblába, és minden körben a lehető legjobb pontszámot próbálják elérni. A játék nemcsak pontosságot, hanem taktikai gondolkodást is igényel, mert a különböző kiszállási szabályok és pontlevonási helyzetek miatt mindig meg kell tervezni a következő dobásokat. A leggyakoribb játékmódok közé tartozik a 301 és az 501, ahol a cél a pontos 0 pont elérése a szabályoknak megfelelő befejezéssel."/>
+        <ContentBoxType2 cim="A Dartshoz szükséges eszközök" balH4="Darts Nyíl" balKep={dartsImage2} jobbH4="Darts Tábla" jobbKep={dartsImage3} />
         <GameTypesSection />
         <DartPartsSection />
         <TipsSection />
