@@ -1,18 +1,18 @@
 import style from './ContentBox.module.css';
 
-function ContentBox({cim, leftContent, rightContent, leftContentH4, rightContentH4, leftContentImage}) {
+function ContentBox({cim, bal, jobb, balH4, jobbH4, balKep}) {
     return (
         <div className={style.container}>
             <h2>{cim}</h2>
             <div className={style.row}>
                  <div className={style.left}>
-                    <h4>{leftContentH4}</h4>
-                    <p>{leftContent}</p>
-                    <img src={leftContentImage} alt="" />
+                    <h4>{balH4}</h4>
+                    <p>{bal}</p>
+                    <img src={balKep} alt="Bal oldali kép" />
                 </div>
                 <div className={style.right}>
-                    <h4>{rightContentH4}</h4>
-                    <p>{rightContent}</p>
+                    <h4>{jobbH4}</h4>
+                    <p>{jobb}</p>
                 </div>
             </div>
            
