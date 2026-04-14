@@ -13,16 +13,16 @@ function Navbar() {
                 <h2>🎯 Darts Score</h2>
             </div>
             <ul className={style.navLinks}>
-                <li><Link to="/">Home</Link></li>
-                {authenticated && <li><Link to="/gameMenu">Game</Link></li>}
+                <li><Link to="/">Kezdőlap</Link></li>
+                {authenticated && <li><Link to="/gameMenu">Játék</Link></li>}
                 {authenticated && <li><Link to="/profile">Profile</Link></li>}
                 {authenticated && admin && <li><Link to="/admin">Admin</Link></li>}
                 {authenticated ? (
-                    <li><button onClick={handleLogout} className={style.logoutBtn}>Logout</button></li>
+                    <li><button onClick={handleLogout} className={style.logoutBtn}>Kijelentkezés</button></li>
                 ) : (
                     <>
-                        <li><Link to="/login">Login</Link></li>
-                        <li><Link to="/register">Register</Link></li>
+                        <li><Link to="/login">Bejelentkezés</Link></li>
+                        <li><Link to="/register">Regisztráció</Link></li>
                     </>
                 )}
             </ul>
