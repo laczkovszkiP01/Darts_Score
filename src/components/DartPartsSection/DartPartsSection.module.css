@@ -46,19 +46,19 @@
   color: #f9f9f9;
 }
 
-.partItem {
+.dartsnyilreszek {
   background: rgba(255, 204, 0, 0.08);
   border: 1px solid rgba(255, 204, 0, 0.14);
   border-radius: 12px;
   padding: 1rem;
 }
 
-.partItem h4 {
+.dartsnyilreszek h4 {
   color: #ffcc00;
   margin: 0 0 0.75rem;
 }
 
-.partItem p {
+.dartsnyilreszek p {
   margin: 0;
   line-height: 1.6;
 }
