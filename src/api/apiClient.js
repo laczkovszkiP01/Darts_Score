@@ -34,3 +34,36 @@ export const changePassword = async (token, currentPassword, newPassword, confir
   return response.json();
 };
 
+// Matches
+export const saveMatch = async (token, gameMode, outMode, players) => {
+  const response = await fetch(`${API_URL}/matches/save`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ gameMode, outMode, players })
+  });
+
+  return response.json();
+};
+
+export const getUserMatches = async (token) => {
+  const response = await fetch(`${API_URL}/matches/user-matches`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
+
+export const getMatch = async (token, matchId) => {
+  const response = await fetch(`${API_URL}/matches/${matchId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
