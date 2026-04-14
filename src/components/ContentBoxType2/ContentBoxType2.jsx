@@ -1,26 +1,25 @@
-import style from './ContentBoxType2.module.css';
+import styles from './ContentBoxType2.module.css';
 
-function ContentBoxType2({cim, leftContent, rightContent, leftContentH4, rightContentH4, rightContentImage, leftContentImage}) {
+
+function ContentBoxType2({cim,bal,jobb,balH4,jobbH4,jobbKep,balKep,}) 
+{
     return (
-        <div className={style.container}>
+        <div className={styles.container}>
             <h2>{cim}</h2>
-            <div className={style.row}>
-                 <div className={style.left}>
-                    <h4>{leftContentH4}</h4>
-                    <p>{leftContent}</p>
-                    <img src={leftContentImage} alt="" />
-                    
+            <div className={styles.row}>
+                <div className={styles.left}>
+                    <h4>{balH4}</h4>
+                    <p>{bal}</p>
+                    <img src={balKep} alt="Darts nyíl" />
                 </div>
-                <div className={style.right}>
-                    <h4>{rightContentH4}</h4>
-                    <p>{rightContent}</p>
-                    <img src={rightContentImage} alt="" />
+                <div className={styles.right}>
+                    <h4>{jobbH4}</h4>
+                    <p>{jobb}</p>
+                    <img src={jobbKep} alt="Darts tábla" />
                 </div>
             </div>
-           
         </div>
-
-);
+    );
 }
 
 export default ContentBoxType2;
