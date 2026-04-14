@@ -1,0 +1,50 @@
+.container {
+	min-height: calc(100vh - 80px);
+	display: grid;
+	place-items: center;
+	padding: 2rem 1rem;
+}
+
+.card {
+	width: min(560px, 100%);
+	text-align: center;
+	border-radius: 16px;
+	border: 1px solid var(--border);
+	background: var(--surface);
+	box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+	padding: 2rem 1.2rem;
+}
+
+.code {
+	margin: 0;
+	font-size: clamp(2.6rem, 10vw, 4rem);
+	line-height: 1;
+	color: var(--accent-soft);
+	font-weight: 700;
+}
+
+.card h1 {
+	margin: 0.7rem 0 0.9rem 0;
+	font-size: clamp(1.3rem, 3vw, 1.8rem);
+	color: var(--text-main);
+}
+
+.text {
+	margin: 0 auto 1.2rem auto;
+	max-width: 42ch;
+	color: var(--text-soft);
+}
+
+.homeLink {
+	display: inline-block;
+	padding: 0.65rem 1rem;
+	border-radius: 10px;
+	border: 1px solid rgba(245, 158, 11, 0.45);
+	background: rgba(245, 158, 11, 0.15);
+	color: #fde68a;
+	font-weight: 600;
+}
+
+.homeLink:hover {
+	background: rgba(245, 158, 11, 0.24);
+}
