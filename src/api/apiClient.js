@@ -67,3 +67,46 @@ export const getMatch = async (token, matchId) => {
 
   return response.json();
 };
+
+// Admin
+export const getAdminUsers = async (token) => {
+  const response = await fetch(`${API_URL}/admin/users`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
+
+export const getAdminMatches = async (token) => {
+  const response = await fetch(`${API_URL}/admin/matches`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
+
+export const deleteAdminUser = async (token, userId) => {
+  const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
+
+export const deleteAdminMatch = async (token, matchId) => {
+  const response = await fetch(`${API_URL}/admin/matches/${matchId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+
+  return response.json();
+};
