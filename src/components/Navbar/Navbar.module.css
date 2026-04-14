@@ -84,7 +84,7 @@
     transform: translateY(-2px);
 }
 
-/* Tablet (768px és alatt) */
+
 @media (max-width: 768px) {
     .navbar {
         padding: 12px 20px;
@@ -104,7 +104,7 @@
     }
 }
 
-/* Mobiltelefon (480px és alatt) */
+
 @media (max-width: 480px) {
     .navbar {
         flex-wrap: wrap;
