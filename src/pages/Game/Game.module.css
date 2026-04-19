@@ -26,6 +26,47 @@
   padding: 15px;
 }
 
+.mobileScoreBar {
+  display: none;
+}
+
+.mobilePlayerPill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  width: 128px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-main);
+  white-space: nowrap;
+  font-size: 0.85em;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.activeMobilePill {
+  border-color: rgba(245, 158, 11, 0.65);
+  background: rgba(245, 158, 11, 0.18);
+}
+
+.mobilePlayerName {
+  max-width: 62px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobilePlayerScore {
+  font-weight: 700;
+  color: #fde68a;
+}
+
+.mobilePlayerLeg {
+  color: #bbf7d0;
+  font-weight: 700;
+}
+
 /* Játékosok kijelzése */
 .players {
   display: grid;
@@ -83,6 +124,17 @@
   color: var(--text-main);
   margin: 5px 0;
   font-family: 'Courier New', monospace;
+}
+
+.legsBadge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.8em;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.2);
+  color: #bbf7d0;
 }
 
 .preview {
@@ -341,11 +393,50 @@
   text-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
 }
 
+.winnerMeta {
+  margin-top: -10px;
+  margin-bottom: 16px;
+  color: var(--text-soft);
+}
+
 .winnerActions {
   display: flex;
   gap: 15px;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.guestInfoBox {
+  width: min(560px, 100%);
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  text-align: left;
+}
+
+.guestInfoBox h3 {
+  margin: 0 0 8px 0;
+  color: #fde68a;
+  font-size: 1em;
+}
+
+.guestInfoBox p {
+  margin: 0 0 10px 0;
+  color: #e2e8f0;
+  font-size: 0.92em;
+}
+
+.guestInfoGrid {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 6px 12px;
+  font-size: 0.9em;
+  color: #cbd5e1;
+}
+
+.guestInfoGrid strong {
+  color: #f8fafc;
 }
 
 .saveBtn {
@@ -413,7 +504,31 @@
 
 @media (max-width: 768px) {
   .gameContainer {
-    padding: 25px 10px 10px 10px;
+    padding: 134px 10px 10px 10px;
+  }
+
+  .mobileScoreBar {
+    position: fixed;
+    top: 66px;
+    left: 8px;
+    right: 8px;
+    z-index: 950;
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 8px;
+    justify-content: flex-start;
+    overflow-x: visible;
+    padding-bottom: 2px;
+  }
+
+  .mobilePlayerPill {
+    flex: 0 1 auto;
+    min-width: auto;
+    justify-content: space-between;
+  }
+
+  .mobilePlayerName {
+    max-width: 62px;
   }
 
   .numberpad {
@@ -437,10 +552,38 @@
   .winnerBox h2 {
     font-size: 1.5em;
   }
+
+  .guestInfoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameContainer {
+    padding-top: 186px;
+  }
+
+  .mobileScoreBar {
+    top: 116px;
+  }
+
+  .mobilePlayerPill {
+    padding: 6px 8px;
+    font-size: 0.8em;
+    width: 118px;
+  }
+
+  .mobilePlayerName {
+    max-width: 52px;
+  }
 }
 
 
-@media (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
+  .gameContainer {
+    padding-top: 92px;
+  }
+
   .players {
     height: auto;
   }
