@@ -17,6 +17,7 @@ function GameMenu() {
     const [playerNames, setPlayerNames] = useState(['', '']);
     const [gameLength, setGameLength] = useState('');
     const [gameType, setGameType] = useState('');
+    const [firstTo, setFirstTo] = useState('');
 
     const playerCount = playerModeOptions.find((option) => option.value === playerMode)?.playerCount ?? 2;
 
@@ -46,7 +47,7 @@ function GameMenu() {
     const handleSettings = (e) => {
         e.preventDefault();
         
-        if (!playerNames.every((name) => name.trim()) || !gameLength || !gameType) {
+        if (!playerNames.every((name) => name.trim()) || !gameLength || !gameType || !firstTo) {
             alert('Kérlek töltsd ki az összes mezőt!');
             return;
         }
@@ -78,6 +79,7 @@ function GameMenu() {
                 players,
                 gameMode: gameLength,
                 outMode,
+                firstTo: Number(firstTo),
             },
         });
     };
@@ -150,6 +152,21 @@ function GameMenu() {
                                     <option value="">-- Válassz --</option>
                                     <option value="straight">Egyenes kiszálló</option>
                                     <option value="double">Dupla kiszálló</option>
+                                </select>
+                            </div>
+
+                            <div className={style.formGroup}>
+                                <label htmlFor="firstTo">Leg-ek száma (First to):</label>
+                                <select
+                                    id="firstTo"
+                                    value={firstTo}
+                                    onChange={(e) => setFirstTo(e.target.value)}
+                                >
+                                    <option value="">-- Válassz --</option>
+                                    <option value="1">First to 1</option>
+                                    <option value="2">First to 2</option>
+                                    <option value="3">First to 3</option>
+                                    <option value="5">First to 5</option>
                                 </select>
                             </div>
 
