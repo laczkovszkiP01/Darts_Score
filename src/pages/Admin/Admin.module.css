@@ -1,0 +1,149 @@
+.container {
+  min-height: 100vh;
+  padding: 2.2rem 1rem;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(251, 191, 36, 0.2), transparent 35%),
+    radial-gradient(circle at 85% 10%, rgba(59, 130, 246, 0.16), transparent 35%),
+    linear-gradient(180deg, #f3f6fb 0%, #eef2f7 100%);
+  color: #111827;
+}
+
+.box {
+  max-width: 1040px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 14px 38px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
+  padding: 1.6rem;
+}
+
+.box h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  line-height: 1.2;
+  color: #0f172a;
+}
+
+.box h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #111827;
+}
+
+.box p {
+  color: #374151;
+}
+
+.subtitle {
+  color: #475569;
+  margin-top: 0.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.section {
+  margin-top: 1.4rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.list {
+  margin-top: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.row > div {
+  color: #1f2937;
+}
+
+.row strong {
+  color: #0f172a;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.role {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.84rem;
+  color: #0b5fc6;
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
+
+.meta {
+  display: inline-block;
+  margin-left: 0.65rem;
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+.deleteBtn {
+  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.deleteBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.deleteBtn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.error {
+  margin-top: 0.9rem;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .container {
+    padding: 1.2rem 0.75rem;
+  }
+
+  .box {
+    padding: 1rem;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .deleteBtn {
+    width: 100%;
+  }
+}
