@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import { loginUser, setToken, setCurrentUser } from '../../api/apiClient';
 import style from './Login.module.css';
 
 function Login() {
@@ -10,6 +11,30 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await loginUser(email, password);
+      
+
+      if (response?.token) {
+        setToken(response.token);
+        setCurrentUser(response.user);
+        alert('✅ Sikeres bejelentkezés!');
+        navigate('/');
+      } else {
+        setError(response.message || 'Bejelentkezési hiba');
+      }
+    } catch (err) {
+      setError('Hiba a kapcsolódás során. Kérlek próbáld újra!');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
