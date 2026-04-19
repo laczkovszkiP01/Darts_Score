@@ -9,18 +9,22 @@ export default function Game() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  
+
   const [gameData, setGameData] = useState(null);
   const [players, setPlayers] = useState([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
   const [currentThrows, setCurrentThrows] = useState([]);
   const [multiplier, setMultiplier] = useState(1);
   const [roundNumber, setRoundNumber] = useState(1);
+  const [currentLeg, setCurrentLeg] = useState(1);
+  const [firstTo, setFirstTo] = useState(1);
   const [winner, setWinner] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const token = getToken();
+  const canSaveMatch = Boolean(token);
 
-  
+
   useEffect(() => {
     if (location.state) {
       setGameData({
@@ -28,6 +32,7 @@ export default function Game() {
         players: location.state.players,
         gameMode: location.state.gameMode,
         outMode: location.state.outMode,
+        firstTo: location.state.firstTo || 1,
       });
     }
   }, [location.state]);
@@ -36,7 +41,8 @@ export default function Game() {
   useEffect(() => {
     if (!gameData) return;
 
-    
+    setFirstTo(Number(gameData.firstTo) || 1);
+
     const randomIndex = Math.floor(Math.random() * gameData.players.length);
     setCurrentPlayerIndex(randomIndex);
     const startingScore = parseInt(gameData.gameMode);
@@ -44,6 +50,7 @@ export default function Game() {
       ...p,
       score: startingScore,
       rounds: [],
+      legsWon: 0,
     }));
     setPlayers(initialPlayers);
 
@@ -102,6 +109,7 @@ export default function Game() {
     const newThrows = [...currentThrows, { value, multiplier, total: finalValue }];
 
     setCurrentThrows(newThrows);
+    setMultiplier(1);
     
   };
 
@@ -125,13 +133,18 @@ export default function Game() {
   //Kör beküldés
   const submitRound = () => {
     if (winner) return;
-    if (currentThrows.length !== 3) return;
+    if (currentThrows.length === 0) return;
 
     const result = evaluateRound({
       initialScore: currentPlayer.score,
       throwsList: currentThrows,
       outMode: gameData.outMode,
     });
+
+    // Csak akkor lehessen 1-2 nyíllal lezárni a kört, ha ténylegesen kiszállt.
+    if (currentThrows.length < 3 && !result.win) {
+      return;
+    }
 
     if (result.bust) {
       alert("Bust! A kör vége.");
@@ -147,8 +160,26 @@ export default function Game() {
       const updatedPlayers = [...players];
       updatedPlayers[currentPlayerIndex].score = 0;
       updatedPlayers[currentPlayerIndex].rounds.push(currentThrows);
-      setPlayers(updatedPlayers);
-      setWinner(currentPlayer.name);
+      const newLegWins = (updatedPlayers[currentPlayerIndex].legsWon || 0) + 1;
+      updatedPlayers[currentPlayerIndex].legsWon = newLegWins;
+
+      if (newLegWins >= firstTo) {
+        setPlayers(updatedPlayers);
+        setWinner(currentPlayer.name);
+        return;
+      }
+
+      const startingScore = parseInt(gameData.gameMode);
+      const resetPlayersForNextLeg = updatedPlayers.map((player) => ({
+        ...player,
+        score: startingScore,
+      }));
+
+      setPlayers(resetPlayersForNextLeg);
+      setCurrentThrows([]);
+      setCurrentLeg((prev) => prev + 1);
+      setRoundNumber(1);
+      setCurrentPlayerIndex((currentPlayerIndex + 1) % updatedPlayers.length);
       return;
     }
 
@@ -161,10 +192,8 @@ export default function Game() {
   };
 
   const handleSaveMatch = async () => {
-    const token = getToken();
     if (!token) {
-      alert("Bejelentkezés szükséges a mérkőzés mentéséhez");
-      navigate("/login");
+      alert("Vendég módban a meccs nem menthető.");
       return;
     }
 
@@ -177,6 +206,7 @@ export default function Game() {
           name: p.name,
           starting_score: parseInt(gameData.gameMode),
           final_score: p.score,
+          legs_won: p.legsWon || 0,
           is_winner: p.name === winner,
           rounds: p.rounds.map((round, index) => {
             
@@ -198,7 +228,7 @@ export default function Game() {
         }))
       };
 
-      await saveMatch(token, gameData.gameMode, gameData.outMode, matchData.players);
+      await saveMatch(token, gameData.gameMode, gameData.outMode, firstTo, matchData.players);
       alert("✅ Mérkőzés sikeresen mentve!");
       navigate("/gameMenu");
     } catch (error) {
@@ -212,6 +242,34 @@ export default function Game() {
   const resetGame = () => {
     navigate("/gameMenu");
   };
+
+  const leaderboardByLegs = [...players].sort((a, b) => {
+    if ((b.legsWon || 0) !== (a.legsWon || 0)) {
+      return (b.legsWon || 0) - (a.legsWon || 0);
+    }
+    return a.name.localeCompare(b.name, 'hu');
+  });
+
+  const totalLegsWon = players.reduce((sum, player) => sum + (player.legsWon || 0), 0);
+  const guestPlayerStats = players.map((player) => {
+    const roundScores = player.rounds.map((round) =>
+      round.reduce((sum, throwItem) => sum + (throwItem.total || 0), 0)
+    );
+    const totalScore = roundScores.reduce((sum, score) => sum + score, 0);
+    const average = roundScores.length > 0 ? totalScore / roundScores.length : 0;
+    const count100Plus = roundScores.filter((score) => score >= 100).length;
+    const count180Plus = roundScores.filter((score) => score >= 180).length;
+    const legShare = totalLegsWon > 0 ? ((player.legsWon || 0) / totalLegsWon) * 100 : 0;
+
+    return {
+      name: player.name,
+      average,
+      count100Plus,
+      count180Plus,
+      legsWon: player.legsWon || 0,
+      legShare,
+    };
+  });
 
   
   if (!gameData) {
@@ -241,18 +299,75 @@ export default function Game() {
     <>
       <Navbar />
       <div className={style.gameContainer}>
+        <div className={style.mobileScoreBar}>
+          {players.map((p, index) => {
+            const throwsSum =
+              index === currentPlayerIndex
+                ? currentThrows.reduce((sum, item) => sum + (item.total || 0), 0)
+                : 0;
+            const liveRemaining = p.score - throwsSum;
+
+            return (
+              <div
+                key={`mobile-${p.id}`}
+                className={`${style.mobilePlayerPill} ${index === currentPlayerIndex ? style.activeMobilePill : ''}`}
+              >
+                <span className={style.mobilePlayerName}>{p.name}</span>
+                <span className={style.mobilePlayerScore}>{liveRemaining}</span>
+                <span className={style.mobilePlayerLeg}>L:{p.legsWon || 0}</span>
+              </div>
+            );
+          })}
+        </div>
+
         {winner && (
           <div className={style.winnerOverlay}>
             <div className={style.winnerBox}>
               <h2>🏆 {winner} nyert! 🏆</h2>
+              <p className={style.winnerMeta}>Meccs vége • First to {firstTo}</p>
               <div className={style.winnerActions}>
-                <button 
-                  onClick={handleSaveMatch} 
-                  className={style.saveBtn}
-                  disabled={isSaving}
-                >
-                  {isSaving ? "Mentés..." : "💾 Mentés"}
-                </button>
+                {canSaveMatch ? (
+                  <button 
+                    onClick={handleSaveMatch} 
+                    className={style.saveBtn}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? "Mentés..." : "💾 Mentés"}
+                  </button>
+                ) : (
+                  <div className={style.guestInfoBox}>
+                    <h3>Vendég mód - a meccs adatai</h3>
+                    <p>Bejelentkezés nélkül játszottál, ezért ez a meccs nem menthető.</p>
+                    <div className={style.guestInfoGrid}>
+                      <span>Játék:</span>
+                      <strong>{gameData.gameMode} / {gameData.outMode === 'double_out' ? 'Dupla Out' : 'Egyenes Out'}</strong>
+                      <span>First to:</span>
+                      <strong>{firstTo}</strong>
+                      <span>Leg állás:</span>
+                      <strong>
+                        {leaderboardByLegs.map((player) => `${player.name}: ${player.legsWon || 0}`).join(' | ')}
+                      </strong>
+                      <span>Átlagok:</span>
+                      <strong>
+                        {guestPlayerStats.map((player) => `${player.name}: ${player.average.toFixed(1)}`).join(' | ')}
+                      </strong>
+                      <span>100+ körök:</span>
+                      <strong>
+                        {guestPlayerStats.map((player) => `${player.name}: ${player.count100Plus}`).join(' | ')}
+                      </strong>
+                      <span>180+ körök:</span>
+                      <strong>
+                        {guestPlayerStats.map((player) => `${player.name}: ${player.count180Plus}`).join(' | ')}
+                      </strong>
+                      <span>Legek eloszlása:</span>
+                      <strong>
+                        {guestPlayerStats
+                          .map((player) => `${player.name}: ${player.legsWon} (${player.legShare.toFixed(0)}%)`)
+                          .join(' | ')}
+                      </strong>
+                    </div>
+                  </div>
+                )}
                 <button onClick={resetGame} className={style.restartBtn}>
                   📋 Új mérkőzés
                 </button>
@@ -285,9 +400,10 @@ export default function Game() {
                     )}
                   </div>
                   <div className={style.score}>{p.score}</div>
+                  <div className={style.legsBadge}>Leg: {p.legsWon || 0}</div>
                   {index === currentPlayerIndex && currentThrows.length > 0 && (
                     <div className={style.preview}>
-                      Következő: {previewScore}
+                      Maradék: {previewScore}
                     </div>
                   )}
                   {index === currentPlayerIndex && (
@@ -393,7 +509,7 @@ export default function Game() {
 
           {/* Round info */}
           <div className={style.roundInfo}>
-            <p>Kör: {roundNumber}</p>
+            <p>Leg: {currentLeg} / First to {firstTo} • Kör: {roundNumber}</p>
           </div>
         </div>
       </div>
