@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
+import { registerUser, setToken, setCurrentUser } from '../../api/apiClient';
 import style from './Register.module.css';
 
 function Register() {
@@ -12,6 +13,41 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('A jelszavak nem egyeznek!');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('A jelszó legalább 6 karakter hosszú kell legyen!');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await registerUser(username, email, password);
+      
+
+      if (response?.token) {
+        setToken(response.token);
+        setCurrentUser(response.user);
+        alert('✅ Sikeres regisztráció!');
+        navigate('/');
+      } else {
+        setError(response.message || 'Regisztrációs hiba');
+      }
+    } catch (err) {
+      setError('Hiba a kapcsolódás során. Kérlek próbáld újra!');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
