@@ -33,6 +33,7 @@ export default function Game() {
         gameMode: location.state.gameMode,
         outMode: location.state.outMode,
         firstTo: location.state.firstTo || 1,
+        championshipName: location.state.championshipName || null,
       });
     }
   }, [location.state]);
@@ -228,7 +229,7 @@ export default function Game() {
         }))
       };
 
-      await saveMatch(token, gameData.gameMode, gameData.outMode, firstTo, matchData.players);
+      await saveMatch(token, gameData.gameMode, gameData.outMode, firstTo, matchData.players, gameData.championshipName);
       alert("✅ Mérkőzés sikeresen mentve!");
       navigate("/gameMenu");
     } catch (error) {
