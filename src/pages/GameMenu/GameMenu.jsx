@@ -18,6 +18,7 @@ function GameMenu() {
     const [gameLength, setGameLength] = useState('');
     const [gameType, setGameType] = useState('');
     const [firstTo, setFirstTo] = useState('');
+    const [championshipName, setChampionshipName] = useState('');
 
     const playerCount = playerModeOptions.find((option) => option.value === playerMode)?.playerCount ?? 2;
 
@@ -80,6 +81,7 @@ function GameMenu() {
                 gameMode: gameLength,
                 outMode,
                 firstTo: Number(firstTo),
+                championshipName: championshipName.trim() || null,
             },
         });
     };
@@ -168,6 +170,17 @@ function GameMenu() {
                                     <option value="3">First to 3</option>
                                     <option value="5">First to 5</option>
                                 </select>
+                            </div>
+
+                            <div className={style.formGroup}>
+                                <label htmlFor="championshipName">Bajnokság név (opcionális):</label>
+                                <input
+                                    type="text"
+                                    id="championshipName"
+                                    value={championshipName}
+                                    onChange={(e) => setChampionshipName(e.target.value)}
+                                    placeholder="pl: Magyar Bajnokság, Helyi verseny..."
+                                />
                             </div>
 
                             <button type="submit" className={style.submitBtn}>
