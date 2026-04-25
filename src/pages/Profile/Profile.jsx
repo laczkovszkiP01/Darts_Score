@@ -93,6 +93,7 @@ function Profile() {
   const [error, setError] = useState('');
   const [onlineError, setOnlineError] = useState('');
   const [leaderboardMode, setLeaderboardMode] = useState('local');
+  const [leaderboardChampionship, setLeaderboardChampionship] = useState('');
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -102,9 +103,16 @@ function Profile() {
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordLoading, setPasswordLoading] = useState(false);
+
+  // Szuresek engedélyezésére vonatkozó flagek
+  const [enableMatchFilters, setEnableMatchFilters] = useState(false);
+  const [enableChampionshipFilter, setEnableChampionshipFilter] = useState(false);
+
   const [filterGameMode, setFilterGameMode] = useState('');
   const [filterOutMode, setFilterOutMode] = useState('');
   const [filterPlayerName, setFilterPlayerName] = useState('');
+  const [filterChampionship, setFilterChampionship] = useState('');
+  const [filterCreatedDate, setFilterCreatedDate] = useState('');
 
 
   useEffect(() => {
@@ -207,11 +215,28 @@ function Profile() {
   };
 
   // A valasztott mod alapjan epitjuk a top5 leaderboardot.
-  const leaderboardSource = leaderboardMode === 'online' ? onlineMatches : matches;
+  // Szures csak a helyi leaderboard-hoz, bajnoksag alapjan
+  const filteredLeaderboardMatches = matches.filter((match) => {
+    if (leaderboardMode === 'local-championship' && leaderboardChampionship) {
+      const championshipLower = leaderboardChampionship.trim().toLowerCase();
+      const matchChampionship = (match.championship_name || '').toLowerCase();
+      if (!matchChampionship.includes(championshipLower)) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const leaderboardSource = leaderboardMode === 'online' ? onlineMatches : (leaderboardMode === 'local-championship' ? filteredLeaderboardMatches : matches);
   const leaderboard = buildLeaderboard(leaderboardSource).slice(0, 5);
 
   // A meccslista szuresei csak a sajat mentett meccsekre vonatkoznak.
   const filteredMatches = matches.filter((match) => {
+    // Ha nincsenek engedélyezve a szűrések, mutassa az összes meccset
+    if (!enableMatchFilters) {
+      return true;
+    }
+
     // Meccs hossza szerinti szures.
     if (filterGameMode && match.game_mode !== filterGameMode) {
       return false;
@@ -233,11 +258,51 @@ function Profile() {
       }
     }
 
+    // Bajnoksag szures logikaja - csak ha engedélyezve van
+    if (enableChampionshipFilter && filterChampionship) {
+      // Konkret bajnoksag neve szerinti szures
+      const championshipLower = filterChampionship.trim().toLowerCase();
+      const matchChampionship = (match.championship_name || '').toLowerCase();
+      if (!matchChampionship.includes(championshipLower)) {
+        return false;
+      }
+    }
+
+    // Letrehozasi datum szerinti szures.
+    if (filterCreatedDate && match.created_at) {
+      try {
+        let matchDate;
+        // Ha már YYYY-MM-DD formátumú, akkor használd közvetlenül
+        if (match.created_at.includes('T')) {
+          // ISO formátum (2024-01-01T10:00:00Z)
+          matchDate = new Date(match.created_at).toISOString().split('T')[0];
+        } else {
+          // Már szöveges formátum (2024-01-01)
+          matchDate = match.created_at.split(' ')[0]; // Vesz az első részt, ha van space
+        }
+        if (matchDate !== filterCreatedDate) {
+          return false;
+        }
+      } catch (e) {
+        console.error('Dátum konverzió hiba:', match.created_at, e);
+        return false; // Ha nem tudjuk konvertálni, szűrjük ki
+      }
+    }
+
     return true;
   });
 
   const uniqueGameModes = [...new Set(matches.map(m => m.game_mode))].filter(Boolean);
   const uniqueOutModes = [...new Set(matches.map(m => m.out_mode))].filter(Boolean);
+  // Valós bajnokságok
+  const realChampionships = [...new Set(matches.map(m => m.championship_name).filter(Boolean))].sort();
+  // Bajnokság és nem bajnokság opciók + valós bajnokságok
+  const hasChampionshipMatches = matches.some(m => m.championship_name);
+  const hasNonChampionshipMatches = matches.some(m => !m.championship_name);
+  const uniqueChampionships = [];
+  if (hasChampionshipMatches) uniqueChampionships.push('championship');
+  if (hasNonChampionshipMatches) uniqueChampionships.push('no-championship');
+  uniqueChampionships.push(...realChampionships);
 
   // Kezdeti betoltes kozben csak egy egyszeru varakozo nezetet mutatunk.
   if (loading) {
@@ -348,10 +413,48 @@ function Profile() {
               >
                 Online
               </button>
+              <button
+                type="button"
+                onClick={() => setLeaderboardMode('local-championship')}
+                className={`${style.toggleBtn} ${leaderboardMode === 'local-championship' ? style.activeToggle : ''}`}
+              >
+                Helyi bajnokság
+              </button>
             </div>
 
             {leaderboardMode === 'online' && onlineError && (
               <div className={style.error}>{onlineError}</div>
+            )}
+
+            {leaderboardMode === 'local-championship' && (
+              <div className={style.leaderboardFilterControls}>
+                <div className={style.filterGroup}>
+                  <label htmlFor="leaderboardChampionshipSelect">Bajnokság:</label>
+                  <select
+                    id="leaderboardChampionshipSelect"
+                    value={leaderboardChampionship}
+                    onChange={(e) => setLeaderboardChampionship(e.target.value)}
+                    className={style.filterSelect}
+                  >
+                    <option value="">Válassz bajnokságot</option>
+                    {realChampionships.map((championship) => (
+                      <option key={championship} value={championship}>
+                        {championship}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  className={style.resetBtn}
+                  onClick={() => {
+                    setLeaderboardChampionship('');
+                  }}
+                >
+                  Szűrés törlése
+                </button>
+              </div>
             )}
 
             {leaderboard.length === 0 ? (
@@ -380,9 +483,21 @@ function Profile() {
           <section className={style.filterSection}>
             <div className={style.sectionHeader}>
               <h2>Meccsek szűrése</h2>
+              <div className={style.checkboxGroup}>
+                <input
+                  id="enableMatchFilters"
+                  type="checkbox"
+                  checked={enableMatchFilters}
+                  onChange={(e) => setEnableMatchFilters(e.target.checked)}
+                  className={style.filterCheckbox}
+                />
+                <label htmlFor="enableMatchFilters" className={style.checkboxLabel}>
+                  Szűrések engedélyezése
+                </label>
+              </div>
             </div>
             
-            <div className={style.filterControls}>
+            <div className={style.filterControls} style={{ opacity: enableMatchFilters ? 1 : 0.5, pointerEvents: enableMatchFilters ? 'auto' : 'none' }}>
               <div className={style.filterGroup}>
                 <label htmlFor="filterGameMode">Meccs hossz:</label>
                 <select
@@ -426,6 +541,47 @@ function Profile() {
                 />
               </div>
 
+              <div className={style.filterGroup}>
+                <div className={style.checkboxGroup}>
+                  <input
+                    id="enableChampionshipFilter"
+                    type="checkbox"
+                    checked={enableChampionshipFilter}
+                    onChange={(e) => setEnableChampionshipFilter(e.target.checked)}
+                    className={style.filterCheckbox}
+                  />
+                  <label htmlFor="enableChampionshipFilter" className={style.checkboxLabel}>
+                    Bajnokság szűrés
+                  </label>
+                </div>
+                {enableChampionshipFilter && (
+                  <select
+                    id="filterChampionship"
+                    value={filterChampionship}
+                    onChange={(e) => setFilterChampionship(e.target.value)}
+                    className={style.filterSelect}
+                  >
+                    <option value="">-- Válassz opciót --</option>
+                    {realChampionships.map((championship) => (
+                      <option key={championship} value={championship}>
+                        {championship}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div className={style.filterGroup}>
+                <label htmlFor="filterCreatedDate">Létrehozás dátuma:</label>
+                <input
+                  id="filterCreatedDate"
+                  type="date"
+                  value={filterCreatedDate}
+                  onChange={(e) => setFilterCreatedDate(e.target.value)}
+                  className={style.filterInput}
+                />
+              </div>
+
               <button
                 type="button"
                 className={style.resetBtn}
@@ -433,6 +589,9 @@ function Profile() {
                   setFilterGameMode('');
                   setFilterOutMode('');
                   setFilterPlayerName('');
+                  setEnableChampionshipFilter(false);
+                  setFilterChampionship('');
+                  setFilterCreatedDate('');
                 }}
               >
                 Szűrések törlése
@@ -459,7 +618,12 @@ function Profile() {
                 {filteredMatches.map((match) => (
                   <div key={match.id} className={style.matchCard}>
                     <div className={style.matchHeader}>
-                      <h3>{match.game_mode} - {match.out_mode === 'double_out' ? 'Dupla' : 'Egyenes'}</h3>
+                      <div className={style.matchInfo}>
+                        <h3>{match.game_mode} - {match.out_mode === 'double_out' ? 'Dupla' : 'Egyenes'}</h3>
+                        {match.championship_name && (
+                          <p className={style.championshipName}>🏆 {match.championship_name}</p>
+                        )}
+                      </div>
                       <span className={style.matchDate}>
                         {new Date(match.created_at).toLocaleDateString('hu-HU')}
                       </span>
