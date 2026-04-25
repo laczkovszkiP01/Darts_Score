@@ -156,7 +156,7 @@
 .sectionHeader {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 16px;
@@ -257,6 +257,37 @@
   background: rgba(15, 23, 42, 0.35);
 }
 
+.leaderboardFilterControls {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.leaderboardFilterControls .filterGroup {
+  flex: 1;
+  min-width: 200px;
+}
+
+@media (max-width: 768px) {
+  .leaderboardFilterControls {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .leaderboardFilterControls .filterGroup {
+    width: 100%;
+  }
+
+  .leaderboardFilterControls .resetBtn {
+    width: 100%;
+  }
+}
+
 .matchesSection h2 {
   font-size: 1.5em;
   color: var(--accent-soft);
@@ -314,30 +345,100 @@
   gap: 15px;
 }
 
-.matchCard:hover {
-  background: rgba(30, 41, 59, 0.78);
-  border-color: rgba(251, 191, 36, 0.42);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.filterGroup label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 0.9em;
+  color: var(--text-soft);
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.filterCheckbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #fbbf24;
+  flex-shrink: 0;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95em;
+  color: var(--text-soft);
 }
 
 .matchHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 
-.matchHeader h3 {
+.matchInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.matchInfo h3 {
   margin: 0;
   font-size: 1em;
   color: var(--text-main);
+}
+
+.championshipName {
+  margin: 0;
+  font-size: 0.85em;
+  color: #fbbf24;
+  font-weight: 500;
 }
 
 .matchDate {
   font-size: 0.85em;
   color: var(--text-soft);
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .checkboxGroup {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .matchHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .matchInfo {
+    width: 100%;
+  }
+
+  .matchDate {
+    width: 100%;
+    text-align: left;
+  }
 }
 
 .playersInfo {
@@ -406,9 +507,24 @@
 
 .filterControls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 15px;
   align-items: end;
+}
+
+@media (max-width: 768px) {
+  .filterControls {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .filterGroup {
+    width: 100%;
+  }
+
+  .resetBtn {
+    width: 100%;
+  }
 }
 
 .filterGroup {
