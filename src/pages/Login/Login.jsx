@@ -23,7 +23,6 @@ function Login() {
       if (response?.token) {
         setToken(response.token);
         setCurrentUser(response.user);
-        alert('✅ Sikeres bejelentkezés!');
         navigate('/');
       } else {
         setError(response.message || 'Bejelentkezési hiba');
