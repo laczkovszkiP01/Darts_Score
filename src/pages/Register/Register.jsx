@@ -36,7 +36,6 @@ function Register() {
       if (response?.token) {
         setToken(response.token);
         setCurrentUser(response.user);
-        alert('✅ Sikeres regisztráció!');
         navigate('/');
       } else {
         setError(response.message || 'Regisztrációs hiba');
