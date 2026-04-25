@@ -1,16 +1,79 @@
-# React + Vite
+# Szakmai Vizsga Darts 🎯
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ez egy teljes körű darts pontszámoló és meccskezelő alkalmazás, mely leaderboard funkcionalitást és bajnokság-szűrést biztosít.
 
-Currently, two official plugins are available:
+## Mit használunk
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend**: React + Vite
+- **Backend**: Node.js + Express + Sequelize
+- **Adatbázis**: PostgreSQL
+- **Tesztelés**: Vitest (frontend + backend), Postman (API)
 
-## React Compiler
+## Új Funkciók
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🏆 Bajnokság Kezelés
+- Opcionális "Bajnokság név" mező meccsmenüben
+- Bajnokság alapú szűrés a profiloldalon
+- Mentett meccseken megjelenik a bajnokság név 🏆 ikonnal
 
-## Expanding the ESLint configuration
+### 📊 Leaderboard Rendszer
+- **Helyi** - Összes helyi mérkőzés
+- **Online** - Az összes felhasználó mérkőzése
+- **Helyi bajnokság** - Helyi meccsek bajnokság szerint szűrve
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 🔍 Fejlett Szűrés
+- Meccslista szűrése: játékmód, out mód, játékos neve, bajnokság, dátum
+- Checkbox alapú szűrések engedélyezése/letiltása
+- Reszponzív filtersávek minden eszközön
+
+## Futtatás
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd ..
+npm install
+npm run dev
+```
+
+Frontend: http://localhost:5173  
+Backend API: A backend `.env` fájlban konfigurálható (alapértelmezett: 5000-es port)
+
+## Tesztek
+
+### Frontend (55 teszt)
+
+```bash
+npm test
+```
+
+### Backend (47 teszt)
+
+```bash
+cd backend
+npm test
+```
+
+**Teljes teszt lefedettség: 102 teszt**
+
+## Dokumentáció
+
+- Részletes tesztelési útmutató: [TESTING.md](TESTING.md)
+- Beállítási útmutató: [SETUP.md](SETUP.md)
+
+## A Projekt Fő Elemei
+
+- **Játékmenü**: Meccsbeállítások, bajnokság megadás (opcionális)
+- **Játék**: Darts pontszámítás, win/lose feltételek, szétszálló kezelés
+- **Profil**: Mentett meccsek listája, szűrések, leaderboard 3 módban
+- **Admin**: Felhasználók és meccsek kezelése
+- **Autentikáció**: JWT token alapú, jelszócsere támogatott
+
