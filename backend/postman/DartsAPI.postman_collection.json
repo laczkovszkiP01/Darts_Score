@@ -1,0 +1,283 @@
+{
+  "info": {
+    "name": "SzakmaiVizsgaDarts API",
+    "description": "API tests for auth and matches flows.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('register status is 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('register returns token', function () {",
+              "  pm.expect(json.token).to.be.a('string');",
+              "});",
+              "",
+              "pm.environment.set('token', json.token);",
+              "pm.environment.set('userId', String(json.user.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('login status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('login returns token', function () {",
+              "  pm.expect(json.token).to.be.a('string');",
+              "});",
+              "",
+              "pm.environment.set('token', json.token);",
+              "pm.environment.set('userId', String(json.user.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth - Change Password",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/change-password",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "change-password"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"{{password}}\",\n  \"newPassword\": \"{{newPassword}}\",\n  \"confirmPassword\": \"{{newPassword}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('change password status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('change password success message', function () {",
+              "  pm.expect(json.message).to.eql('Jelszó sikeresen módosítva');",
+              "});",
+              "",
+              "pm.environment.set('password', pm.environment.get('newPassword'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matches - Save",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/matches/save",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "matches",
+            "save"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"gameMode\": \"501\",\n  \"outMode\": \"double_out\",\n  \"firstTo\": 3,\n  \"players\": [\n    { \"id\": 1, \"name\": \"{{username}}\" },\n    { \"id\": 2, \"name\": \"Opponent\" }\n  ],\n  \"championshipName\": \"Magyar Bajnokság\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('save match status is 201', function () {",
+              "  pm.response.to.have.status(201);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('save match has id', function () {",
+              "  pm.expect(json.match.id).to.exist;",
+              "});",
+              "",
+              "pm.environment.set('matchId', String(json.match.id));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matches - User Matches",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/matches/user-matches",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "matches",
+            "user-matches"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('user matches status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('user matches is array', function () {",
+              "  pm.expect(Array.isArray(json)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matches - Match Details",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/matches/{{matchId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "matches",
+            "{{matchId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('match details status is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "",
+              "var json = pm.response.json();",
+              "pm.test('match details id matches requested id', function () {",
+              "  pm.expect(String(json.id)).to.eql(pm.environment.get('matchId'));",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
