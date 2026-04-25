@@ -39,14 +39,14 @@ export const changePassword = async (token, currentPassword, newPassword, confir
 
 // Matches
 // Befejezett meccs mentese.
-export const saveMatch = async (token, gameMode, outMode, firstTo, players) => {
+export const saveMatch = async (token, gameMode, outMode, firstTo, players, championshipName = null) => {
   const response = await fetch(`${API_URL}/matches/save`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify({ gameMode, outMode, firstTo, players })
+    body: JSON.stringify({ gameMode, outMode, firstTo, players, championshipName })
   });
 
   return response.json();
