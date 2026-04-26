@@ -13,6 +13,14 @@ export const evaluateRound = ({ initialScore, throwsList, outMode }) => {
       };
     }
 
+    if (remaining === 1 && outMode === 'double_out') {
+      return {
+        bust: true,
+        win: false,
+        remaining: initialScore,
+      };
+    }
+
     if (remaining === 0) {
       if (outMode === 'double_out' && currentThrow.multiplier !== 2) {
         return {
